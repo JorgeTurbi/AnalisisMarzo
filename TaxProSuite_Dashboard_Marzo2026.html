@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaxPro Suite — Panel de Datos Confidencial | Marzo 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg-deep: #0a0e1a;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2235;
+    --border: #1e293b;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59,130,246,.18);
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    --accent-amber: #f59e0b;
+    --accent-purple: #8b5cf6;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --confidential-red: #dc2626;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Confidential Banner */
+  .conf-banner {
+    background: linear-gradient(90deg, #7f1d1d, #991b1b, #7f1d1d);
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fca5a5;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid #dc2626;
+    animation: pulse-banner 3s ease-in-out infinite;
+  }
+  @keyframes pulse-banner {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .85; }
+  }
+  .conf-banner svg { vertical-align: middle; margin-right: 8px; }
+
+  /* Header */
+  .header {
+    padding: 48px 40px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .logo-area h1 {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .logo-area p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin-top: 4px;
+  }
+  .header-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(220,38,38,.12);
+    border: 1px solid rgba(220,38,38,.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fca5a5;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* KPI Cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px 32px;
+  }
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s;
+  }
+  .kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+  .kpi-card:nth-child(1)::before { background: var(--accent); }
+  .kpi-card:nth-child(2)::before { background: var(--accent-green); }
+  .kpi-card:nth-child(3)::before { background: var(--accent-purple); }
+  .kpi-card:nth-child(4)::before { background: var(--accent-amber); }
+  .kpi-card:nth-child(5)::before { background: var(--accent-red); }
+  .kpi-card:nth-child(6)::before { background: #06b6d4; }
+  .kpi-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .kpi-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  /* Section */
+  .section {
+    max-width: 1400px;
+    margin: 0 auto 40px;
+    padding: 0 40px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    max-width: 900px;
+    line-height: 1.7;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+  }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+
+  /* Chart containers */
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    max-height: 340px;
+  }
+  .chart-wrap canvas { width: 100% !important; }
+  .chart-wrap-sm { max-height: 280px; }
+
+  /* Tables */
+  .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+  }
+  .data-table thead th {
+    background: rgba(59,130,246,.08);
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    font-size: 11px;
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+  }
+  .data-table thead th:first-child { border-radius: 8px 0 0 0; }
+  .data-table thead th:last-child { border-radius: 0 8px 0 0; }
+  .data-table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(30,41,59,.5);
+    color: var(--text-secondary);
+    transition: background .15s;
+  }
+  .data-table tbody tr:hover td { background: var(--bg-card-hover); color: var(--text-primary); }
+  .data-table .rank {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .table-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .table-scroll::-webkit-scrollbar { width: 6px; }
+  .table-scroll::-webkit-scrollbar-track { background: var(--bg-card); }
+  .table-scroll::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+
+  /* Status badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .5px;
+  }
+  .badge-owner { background: rgba(16,185,129,.15); color: #34d399; }
+  .badge-employee { background: rgba(139,92,246,.15); color: #a78bfa; }
+  .badge-failed { background: rgba(239,68,68,.15); color: #f87171; }
+  .badge-pending { background: rgba(245,158,11,.15); color: #fbbf24; }
+  .badge-solved { background: rgba(16,185,129,.15); color: #34d399; }
+
+  /* Error explanation */
+  .error-explainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .error-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid var(--accent-red);
+  }
+  .error-card h4 {
+    font-size: 14px;
+    color: var(--accent-red);
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .error-card .ecount {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+  .error-card p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .error-card:nth-child(2) { border-left-color: var(--accent-amber); }
+  .error-card:nth-child(2) h4 { color: var(--accent-amber); }
+  .error-card:nth-child(3) { border-left-color: var(--accent-purple); }
+  .error-card:nth-child(3) h4 { color: var(--accent-purple); }
+
+  /* Global explanation box */
+  .global-box {
+    background: linear-gradient(135deg, rgba(59,130,246,.08), rgba(139,92,246,.08));
+    border: 1px solid rgba(59,130,246,.2);
+    border-radius: 14px;
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+  .global-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .global-box p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 10px;
+  }
+  .global-box p:last-child { margin-bottom: 0; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    max-width: 1400px;
+    margin: 40px auto 0;
+  }
+
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .error-explainer { grid-template-columns: 1fr; }
+    .header, .kpi-grid, .section { padding-left: 20px; padding-right: 20px; }
+    .kpi-value { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CONFIDENTIAL BANNER -->
+<div class="conf-banner">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+  Documento Confidencial — Exclusivo para Socios de TaxPro Suite — Prohibida su distribución
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo-area">
+      <h1>TaxPro Suite</h1>
+      <p>Panel de Análisis de Base de Datos — Marzo 2026 (1 al 11)</p>
+    </div>
+    <div class="header-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Solo Socios
+    </div>
+  </div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-label">Total Sesiones</div>
+    <div class="kpi-value">309</div>
+    <div class="kpi-sub">Del 1 al 11 de marzo</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Usuarios Únicos</div>
+    <div class="kpi-value">46</div>
+    <div class="kpi-sub">Cuentas activas en el período</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Promedio Sesiones/Usuario</div>
+    <div class="kpi-value">6.72</div>
+    <div class="kpi-sub">Frecuencia de uso promedio</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Promedio Sesiones/Día</div>
+    <div class="kpi-value">9.97</div>
+    <div class="kpi-sub">≈10 sesiones diarias</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Fallos Config. Email</div>
+    <div class="kpi-value" style="color:#ef4444">156</div>
+    <div class="kpi-sub">Por config. SMTP de clientes / límites Gmail</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Oficinas Registradas</div>
+    <div class="kpi-value">51</div>
+    <div class="kpi-sub">Propietarios activos</div>
+  </div>
+</div>
+
+<!-- GLOBAL EXPLANATION -->
+<div class="section">
+  <div class="global-box">
+    <h3>📊 Explicación Global del Reporte</h3>
+    <p>Este panel presenta el análisis integral de la base de datos de <strong>TaxPro Suite</strong> correspondiente a los primeros 11 días de marzo 2026. Los datos reflejan la actividad real de la plataforma, incluyendo sesiones de usuario, patrones de conexión, dispositivos utilizados, distribución geográfica, y un análisis detallado de las incidencias de correo electrónico registradas en las cuentas de los clientes.</p>
+    <p>De las <strong>51 oficinas registradas</strong> en la plataforma, <strong>46 usuarios únicos</strong> generaron actividad en este período, lo que indica una tasa de adopción del <strong>90.2%</strong> en el mes. Se registraron un total de <strong>309 sesiones</strong>, con un promedio de <strong>6.72 sesiones por usuario</strong>, lo cual refleja un uso recurrente y constante del sistema durante la temporada fiscal.</p>
+    <p>Los días de mayor actividad son <strong>lunes a jueves</strong> (entre 34-43 sesiones diarias), mientras que los fines de semana registran una caída significativa (4-19 sesiones). Se identificaron <strong>156 incidencias en el envío de correos</strong>, de las cuales la <strong>gran mayoría (30% — "Failure sending mail" y "Syntax error") se deben a configuraciones incorrectas del SMTP en las cuentas de los clientes</strong>, no a fallos del sistema TaxPro Suite. El 70% restante corresponde a <strong>bloqueos por límite de tasa impuestos por el proveedor Google (error 429)</strong>, una restricción externa de Gmail que no está bajo control de la plataforma. Estas situaciones han sido abordadas en múltiples sesiones de soporte y capacitación, donde el equipo de desarrollo ha demostrado el procedimiento correcto de <strong>configuración SMTP</strong> que debe ser utilizado por los equipos de soporte al momento de configurar las cuentas de correo de cada cliente.</p>
+  </div>
+
+  <!-- SMS MODULE NOTE -->
+  <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:14px;padding:28px;margin-bottom:32px">
+    <h3 style="font-size:16px;font-weight:700;color:#10b981;margin-bottom:10px">📱 Nota sobre el Módulo de SMS</h3>
+    <p style="font-size:14px;color:var(--text-secondary);line-height:1.8">Las credenciales necesarias para el desarrollo e implementación del módulo de SMS fueron recibidas el <strong>27 de enero de 2026</strong>. A partir de esa fecha se inició el proceso de desarrollo e integración de dicho módulo dentro de la plataforma. Es importante registrar esta fecha para efectos de trazabilidad y para clarificar la línea temporal de disponibilidad de esta funcionalidad.</p>
+  </div>
+</div>
+
+<!-- SECTION 1: SESSIONS PER DAY -->
+<div class="section">
+  <div class="section-title"><span class="dot" style="background:var(--accent)"></span> Sesiones por Día en Marzo</div>
+  <div class="section-desc">Muestra la cantidad de sesiones totales y usuarios únicos que accedieron al sistema cada día. Permite identificar los días de mayor y menor actividad, lo cual es clave para planificar mantenimientos, evaluar la carga del servidor y comprender los hábitos de uso de los clientes durante la temporada de taxes.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Sesiones y Usuarios Únicos por Día</div>
+      <div class="chart-wrap"><canvas id="chartDailySessions"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Distribución por Día de la Semana</div>
+      <div class="chart-wrap"><canvas id="chartDayOfWeek"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: WEEKLY -->
+<div class="section">
+  <div class="section-title"><span class="dot" style="background:var(--accent-green)"></span> Sesiones por Semana</div>
+  <div class="section-desc">Vista agregada semanal que compara el volumen de sesiones entre la Semana 10 (1-7 marzo, semana completa) y la Semana 11 (8-11 marzo, parcial). La Semana 10 registró 201 sesiones con 40 usuarios, mientras que la Semana 11 lleva 107 sesiones con 31 usuarios en solo 4 días, lo que proyecta un ritmo similar o superior.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Comparativa Semanal</div>
+      <div class="chart-wrap chart-wrap-sm"><canvas id="chartWeekly"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Proyección Semanal</div>
+      <div class="chart-wrap chart-wrap-sm"><canvas id="chartWeeklyProjection"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: TOP 10 USERS -->
+<div class="section">
+  <div class="section-title"><span class="dot" style="background:var(--accent-purple)"></span> Top 10 Usuarios Más Activos</div>
+  <div class="section-desc">Los usuarios con mayor cantidad de sesiones representan a las oficinas que más utilizan el sistema. Esto indica mayor adopción del producto, más clientes siendo atendidos a través de TaxPro Suite, y potencialmente mayor facturación. Estos usuarios son candidatos ideales para testimonios, beta testing de nuevas funcionalidades y programas de referidos.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Ranking de Actividad</div>
+      <div class="chart-wrap"><canvas id="chartTop10"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Detalle de Top 10</div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Usuario</th><th>Sesiones</th><th>País</th></tr></thead>
+          <tbody>
+            <tr><td class="rank">1</td><td>JOHARY ADAMES</td><td>27</td><td>🇺🇸 US</td></tr>
+            <tr><td class="rank">2</td><td>Alma Sanchez</td><td>19</td><td>🇺🇸 US</td></tr>
+            <tr><td class="rank">3</td><td>Salvador Solorzano</td><td>16</td><td>🇺🇸 US</td></tr>
+            <tr><td class="rank">4</td><td>Cesar M. Mejia B.</td><td>16</td><td>🇩🇴 DR</td></tr>
+            <tr><td class="rank">5</td><td>Veronica Ocampo</td><td>15</td><td>🇺🇸 US</td></tr>
+            <tr><td class="rank">6</td><td>Ana Maria Leon G.</td><td>14</td><td>🇺🇸 US</td></tr>
+            <tr><td class="rank">7</td><td>OLGA PENA</td><td>13</td><td>🇺🇸 US</td></tr>
+            <tr><td class="rank">8</td><td>Magda Rodriguez</td><td>13</td><td>🇺🇸 US</td></tr>
+            <tr><td class="rank">9</td><td>Liz Velez</td><td>13</td><td>🇺🇸 US</td></tr>
+            <tr><td class="rank">10</td><td>Gloria Gomez</td><td>11</td><td>🇺🇸 US</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: DEVICES -->
+<div class="section">
+  <div class="section-title"><span class="dot" style="background:var(--accent-amber)"></span> Sesiones por Dispositivo / Navegador</div>
+  <div class="section-desc">Identifica qué navegadores y sistemas operativos utilizan los usuarios para acceder a TaxPro Suite. Esta información es esencial para priorizar las pruebas de compatibilidad (QA), optimizar el rendimiento en las plataformas más utilizadas, y decidir si es necesario dar soporte a navegadores obsoletos. El 87% del tráfico proviene de Windows con Chrome/Edge, lo que simplifica el testing.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Distribución por Sistema Operativo</div>
+      <div class="chart-wrap chart-wrap-sm"><canvas id="chartOS"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Distribución por Navegador</div>
+      <div class="chart-wrap chart-wrap-sm"><canvas id="chartBrowser"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: COUNTRIES -->
+<div class="section">
+  <div class="section-title"><span class="dot" style="background:#06b6d4"></span> Sesiones por País</div>
+  <div class="section-desc">Muestra la distribución geográfica de los accesos al sistema. El <strong>89.64%</strong> del tráfico proviene de Estados Unidos (43 usuarios), seguido por República Dominicana con <strong>8.41%</strong> (3 usuarios) y España con <strong>1.94%</strong> (1 usuario). Esto confirma que la base de usuarios es predominantemente estadounidense, con presencia en el Caribe y Europa, lo que es relevante para decisiones de infraestructura (CDN), horarios de mantenimiento y estrategias de expansión.</div>
+  <div class="grid-3">
+    <div class="card" style="text-align:center">
+      <div style="font-size:48px;margin-bottom:8px">🇺🇸</div>
+      <div style="font-family:'JetBrains Mono';font-size:28px;font-weight:700">89.64%</div>
+      <div style="color:var(--text-secondary);font-size:13px">Estados Unidos</div>
+      <div style="color:var(--text-muted);font-size:12px;margin-top:4px">277 sesiones · 43 usuarios</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:48px;margin-bottom:8px">🇩🇴</div>
+      <div style="font-family:'JetBrains Mono';font-size:28px;font-weight:700">8.41%</div>
+      <div style="color:var(--text-secondary);font-size:13px">República Dominicana</div>
+      <div style="color:var(--text-muted);font-size:12px;margin-top:4px">26 sesiones · 3 usuarios</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:48px;margin-bottom:8px">🇪🇸</div>
+      <div style="font-family:'JetBrains Mono';font-size:28px;font-weight:700">1.94%</div>
+      <div style="color:var(--text-secondary);font-size:13px">España</div>
+      <div style="color:var(--text-muted);font-size:12px;margin-top:4px">6 sesiones · 1 usuario</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:0">
+    <div class="card-title">Distribución Geográfica</div>
+    <div class="chart-wrap chart-wrap-sm"><canvas id="chartCountry"></canvas></div>
+  </div>
+</div>
+
+<!-- SECTION 6: USERS DETAIL -->
+<div class="section">
+  <div class="section-title"><span class="dot" style="background:var(--accent-green)"></span> Usuarios Conectados en Marzo (Detalle Completo)</div>
+  <div class="section-desc">Listado completo de los 46 usuarios que accedieron al sistema, incluyendo su rol (Propietario o Empleado), número de sesiones, días conectados y última conexión. Los propietarios son los titulares de las cuentas de oficina; los empleados son colaboradores con acceso delegado. Esta vista permite identificar cuentas inactivas, usuarios de prueba (como "Sales Account 1" y "Demo Tax") y patrones de uso por oficina.</div>
+  <div class="card">
+    <div class="table-scroll" style="max-height:500px">
+      <table class="data-table" id="usersTable">
+        <thead><tr><th>#</th><th>Nombre</th><th>Rol</th><th>Sesiones</th><th>Días</th><th>Última Conexión</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 7: ERRORS -->
+<div class="section">
+  <div class="section-title"><span class="dot" style="background:var(--accent-red)"></span> Análisis de Incidencias de Correo Electrónico</div>
+  <div class="section-desc">TaxPro Suite permite a cada oficina configurar su propia cuenta de correo (SMTP) para el envío de notificaciones automáticas (bienvenida al portal, firmas de documentos, reseteo de contraseñas, confirmaciones de pago, etc.). En marzo se registraron <strong>156 incidencias</strong> en estos envíos. Es fundamental aclarar que <strong>estas incidencias no representan fallos del sistema TaxPro Suite</strong>, sino que se originan en dos causas externas: <strong>(1) configuración incorrecta de los parámetros SMTP</strong> en las cuentas de correo de los clientes (30% de los casos), y <strong>(2) bloqueos por límite de tasa impuestos por Google Gmail</strong> (70% de los casos). En ambos escenarios, la plataforma registra el error correctamente y lo reporta. El procedimiento adecuado de configuración SMTP ha sido enseñado y demostrado al equipo de soporte en múltiples sesiones de capacitación y acompañamiento por parte del equipo de desarrollo.</div>
+
+  <div class="error-explainer">
+    <div class="error-card">
+      <h4>Failure sending mail</h4>
+      <div class="ecount">34</div>
+      <p><strong>¿Qué es?</strong> Error generado por una <strong>configuración SMTP incorrecta</strong> en la cuenta de correo del cliente. El servidor de correo configurado no responde, las credenciales son inválidas, o los parámetros de conexión (host, puerto, SSL/TLS) no coinciden con los requeridos por el proveedor de email del cliente. <strong>No es un error del sistema TaxPro Suite</strong>, sino de la configuración de la cuenta del usuario.</p>
+      <p><strong>Solución:</strong> El equipo de soporte debe reconfigurar la cuenta de correo del cliente utilizando el procedimiento de <strong>SMTP Configuration</strong> tal como fue enseñado en las sesiones de capacitación y demostrado en múltiples sesiones de apoyo por parte del equipo de desarrollo.</p>
+    </div>
+    <div class="error-card">
+      <h4>Gmail API 429 — TooManyRequests</h4>
+      <div class="ecount">109</div>
+      <p><strong>¿Qué es?</strong> Bloqueo temporal impuesto directamente por <strong>Google/Gmail</strong> (código HTTP 429, RESOURCE_EXHAUSTED). Google impone cuotas diarias y por minuto para el envío de correos vía su API. Cuando la cuenta del cliente excede esta cuota, <strong>Google bloquea los envíos</strong> hasta que se renueva el límite. <strong>Esta es una restricción del proveedor externo (Google)</strong>, no un error ni limitación de TaxPro Suite.</p>
+      <p><strong>Solución:</strong> Espaciar los envíos masivos en el tiempo, o configurar la cuenta usando <strong>SMTP Configuration</strong> en lugar de la API de Gmail para evitar las cuotas más restrictivas de la API. El equipo de soporte fue capacitado en este procedimiento.</p>
+    </div>
+    <div class="error-card">
+      <h4>Syntax Error — Command Unrecognized</h4>
+      <div class="ecount">13</div>
+      <p><strong>¿Qué es?</strong> Error causado por una <strong>configuración SMTP incorrecta o incompleta</strong> en la cuenta del cliente. El servidor de correo del cliente no reconoce los comandos porque los parámetros de autenticación, puerto o protocolo de seguridad fueron configurados erróneamente. <strong>No es un fallo del sistema</strong>, sino que las credenciales o ajustes SMTP ingresados al configurar la cuenta del cliente no corresponden con los requeridos por su proveedor de correo.</p>
+      <p><strong>Solución:</strong> Reconfigurar las cuentas afectadas (<code>erojas@...</code>, <code>myportal@...</code>, <code>profincome@...</code>) utilizando los parámetros SMTP correctos del proveedor correspondiente, siguiendo el procedimiento de <strong>SMTP Configuration</strong> capacitado por el equipo de desarrollo.</p>
+    </div>
+  </div>
+
+  <!-- CLASSIFICATION BOX -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+    <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);border-radius:12px;padding:20px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:20px">🔧</span>
+        <span style="font-size:14px;font-weight:700;color:#f87171">Errores por Configuración SMTP del Cliente</span>
+      </div>
+      <div style="font-family:'JetBrains Mono';font-size:36px;font-weight:700;color:var(--text-primary);margin-bottom:6px">47 <span style="font-size:16px;color:var(--text-muted)">(30.1%)</span></div>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Incluye los 34 errores "Failure sending mail" y los 13 "Syntax error". <strong>Todos causados por configuración incorrecta de los parámetros SMTP en las cuentas de correo de los clientes.</strong> No son fallos del sistema. Se resuelven reconfigurando correctamente el SMTP de cada cuenta.</p>
+    </div>
+    <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:12px;padding:20px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:20px">🚫</span>
+        <span style="font-size:14px;font-weight:700;color:#fbbf24">Bloqueos por Proveedor Externo (Google)</span>
+      </div>
+      <div style="font-family:'JetBrains Mono';font-size:36px;font-weight:700;color:var(--text-primary);margin-bottom:6px">109 <span style="font-size:16px;color:var(--text-muted)">(69.9%)</span></div>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Error 429 "TooManyRequests" impuesto por <strong>Google Gmail</strong> al exceder los límites de envío de su API. <strong>Es una restricción del proveedor externo</strong>, no del sistema TaxPro Suite. Se mitiga usando configuración SMTP directa en vez de Gmail API y espaciando envíos masivos.</p>
+    </div>
+  </div>
+  <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:16px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
+    <span style="font-size:22px">✅</span>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin:0"><strong style="color:#34d399">Conclusión:</strong> El 100% de las 156 incidencias registradas se originan fuera del sistema TaxPro Suite — ya sea por configuración incorrecta de SMTP en cuentas de clientes (30.1%) o por restricciones de cuota del proveedor Google (69.9%). El sistema registra y reporta correctamente cada incidencia. La solución pasa por que el equipo de soporte aplique el procedimiento de <strong>SMTP Configuration</strong> enseñado en las capacitaciones del equipo de desarrollo.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Distribución de Incidencias por Tipo</div>
+      <div class="chart-wrap chart-wrap-sm"><canvas id="chartErrors"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Incidencias por Cuenta de Origen</div>
+      <div class="chart-wrap chart-wrap-sm"><canvas id="chartErrorsByOrigin"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Incidencias por Tipo de Notificación</div>
+      <div class="chart-wrap"><canvas id="chartErrorsBySubject"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Estado de Cuentas con Incidencias</div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Cuenta</th><th>Incidencias</th><th>Causa</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td style="font-size:12px">itiss@infinitytax...</td><td>109</td><td style="font-size:11px">Límite Google API</td><td><span class="badge badge-solved">Solucionado</span></td></tr>
+            <tr><td style="font-size:12px">yanirys.heredia@mail.com</td><td>29</td><td style="font-size:11px">Config. SMTP cliente</td><td><span class="badge badge-pending">Pendiente</span></td></tr>
+            <tr><td style="font-size:12px">erojas@eetax...</td><td>7</td><td style="font-size:11px">Config. SMTP cliente</td><td><span class="badge badge-pending">Pendiente</span></td></tr>
+            <tr><td style="font-size:12px">jchprofessional...@yahoo</td><td>5</td><td style="font-size:11px">Config. SMTP cliente</td><td><span class="badge badge-pending">Pendiente</span></td></tr>
+            <tr><td style="font-size:12px">profincome@aol.com</td><td>5</td><td style="font-size:11px">Config. SMTP cliente</td><td><span class="badge badge-pending">Pendiente</span></td></tr>
+            <tr><td style="font-size:12px">myportal@itaxhub.com</td><td>1</td><td style="font-size:11px">Config. SMTP cliente</td><td><span class="badge badge-pending">Pendiente</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px">
+        <p style="font-size:13px;color:var(--accent-amber);font-weight:600;margin-bottom:4px">⚠️ Acción Requerida por Soporte</p>
+        <p style="font-size:12px;color:var(--text-secondary)">5 de 6 cuentas afectadas están en estado <strong>Pendiente</strong> de reconfiguración. Solo la cuenta de Infinity Tax (109 errores por límite de Google) ha sido resuelta. <strong>Se requiere que el equipo de soporte reconfigure las cuentas restantes utilizando el procedimiento de SMTP Configuration</strong> tal como fue demostrado por el equipo de desarrollo en las sesiones de capacitación, para restaurar el envío de correos desde estas cuentas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: OWNERS -->
+<div class="section">
+  <div class="section-title"><span class="dot" style="background:var(--accent-green)"></span> Usuarios Propietarios (Oficinas Registradas)</div>
+  <div class="section-desc">Listado de las 51 oficinas registradas como propietarias en TaxPro Suite. Cada oficina representa un cliente directo del sistema que paga por el servicio. La fecha de registro indica cuándo se creó la cuenta. Las oficinas más antiguas (septiembre-octubre 2025) son los clientes fundadores, mientras que los registros más recientes (febrero-marzo 2026) representan el crecimiento más reciente de la plataforma.</div>
+  <div class="card">
+    <div class="table-scroll" style="max-height:500px">
+      <table class="data-table" id="ownersTable">
+        <thead><tr><th>#</th><th>Oficina</th><th>Propietario</th><th>Fecha Registro</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p style="color:var(--confidential-red);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">⛔ Información Confidencial — Solo para Socios de TaxPro Suite</p>
+  <p>Generado el 11 de marzo de 2026 · TaxPro Suite Analytics · Todos los datos son propiedad exclusiva de TaxPro Suite</p>
+  <p style="margin-top:4px">Queda estrictamente prohibida la reproducción, distribución o divulgación de este documento sin autorización expresa.</p>
+</div>
+
+<script>
+// ======== CHART.JS GLOBAL DEFAULTS ========
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(30,41,59,.5)';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.pointStyleWidth = 10;
+Chart.defaults.plugins.legend.labels.padding = 16;
+
+// ======== 1. DAILY SESSIONS ========
+new Chart(document.getElementById('chartDailySessions'), {
+  type: 'bar',
+  data: {
+    labels: ['Mar 1\nDom','Mar 2\nLun','Mar 3\nMar','Mar 4\nMié','Mar 5\nJue','Mar 6\nVie','Mar 7\nSáb','Mar 8\nDom','Mar 9\nLun','Mar 10\nMar','Mar 11\nMié'],
+    datasets: [{
+      label: 'Sesiones Totales',
+      data: [4, 41, 39, 34, 43, 21, 19, 14, 41, 35, 15],
+      backgroundColor: 'rgba(59,130,246,.7)',
+      borderRadius: 6,
+      borderSkipped: false,
+    },{
+      label: 'Usuarios Únicos',
+      data: [4, 21, 22, 23, 22, 15, 10, 10, 25, 18, 11],
+      backgroundColor: 'rgba(139,92,246,.7)',
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(30,41,59,.3)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ======== 2. DAY OF WEEK ========
+const dayData = {Sunday:[4,14], Monday:[41,41], Tuesday:[39,35], Wednesday:[34,15], Thursday:[43], Friday:[21], Saturday:[19]};
+const dayLabels = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const dayAvgs = [41, 37, 24.5, 43, 21, 19, 9];
+new Chart(document.getElementById('chartDayOfWeek'), {
+  type: 'bar',
+  data: {
+    labels: dayLabels,
+    datasets: [{
+      label: 'Promedio Sesiones',
+      data: dayAvgs,
+      backgroundColor: dayAvgs.map(v => v > 30 ? 'rgba(16,185,129,.7)' : v > 20 ? 'rgba(245,158,11,.7)' : 'rgba(239,68,68,.5)'),
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, grid: { color: 'rgba(30,41,59,.3)' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ======== 3. WEEKLY ========
+new Chart(document.getElementById('chartWeekly'), {
+  type: 'bar',
+  data: {
+    labels: ['Semana 10\n(1-7 Mar)','Semana 11\n(8-11 Mar)'],
+    datasets: [{
+      label: 'Sesiones',
+      data: [201, 107],
+      backgroundColor: ['rgba(59,130,246,.7)','rgba(139,92,246,.7)'],
+      borderRadius: 8,
+      borderSkipped: false,
+      barThickness: 60
+    },{
+      label: 'Usuarios Únicos',
+      data: [40, 31],
+      backgroundColor: ['rgba(59,130,246,.35)','rgba(139,92,246,.35)'],
+      borderRadius: 8,
+      borderSkipped: false,
+      barThickness: 60
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(30,41,59,.3)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// Weekly projection
+new Chart(document.getElementById('chartWeeklyProjection'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Sem 10 (Completa)','Sem 11 (Parcial: 4 días)','Sem 11 (Proyección: 3 días restantes)'],
+    datasets: [{
+      data: [201, 107, 80],
+      backgroundColor: ['rgba(59,130,246,.8)','rgba(139,92,246,.8)','rgba(139,92,246,.3)'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '55%',
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 11 } } }
+    }
+  }
+});
+
+// ======== 4. TOP 10 ========
+new Chart(document.getElementById('chartTop10'), {
+  type: 'bar',
+  data: {
+    labels: ['JOHARY A.','Alma S.','Salvador S.','Cesar M.','Veronica O.','Ana Maria L.','OLGA P.','Magda R.','Liz V.','Gloria G.'],
+    datasets: [{
+      label: 'Sesiones',
+      data: [27,19,16,16,15,14,13,13,13,11],
+      backgroundColor: [
+        'rgba(59,130,246,.9)','rgba(59,130,246,.8)','rgba(59,130,246,.7)','rgba(59,130,246,.65)',
+        'rgba(139,92,246,.7)','rgba(139,92,246,.6)','rgba(139,92,246,.5)',
+        'rgba(16,185,129,.6)','rgba(16,185,129,.5)','rgba(16,185,129,.4)'
+      ],
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, grid: { color: 'rgba(30,41,59,.3)' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ======== 5. OS & Browser ========
+new Chart(document.getElementById('chartOS'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Windows 10', 'macOS', 'iPhone iOS'],
+    datasets: [{
+      data: [269, 36, 3],
+      backgroundColor: ['rgba(59,130,246,.8)','rgba(139,92,246,.8)','rgba(16,185,129,.8)'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: { legend: { position: 'bottom' } }
+  }
+});
+
+new Chart(document.getElementById('chartBrowser'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Chrome','Edge','Safari','Firefox'],
+    datasets: [{
+      data: [193, 80, 33, 2],
+      backgroundColor: ['rgba(59,130,246,.8)','rgba(6,182,212,.8)','rgba(139,92,246,.8)','rgba(245,158,11,.8)'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: { legend: { position: 'bottom' } }
+  }
+});
+
+// ======== 6. COUNTRY ========
+new Chart(document.getElementById('chartCountry'), {
+  type: 'bar',
+  data: {
+    labels: ['Estados Unidos','Rep. Dominicana','España'],
+    datasets: [{
+      label: 'Sesiones',
+      data: [277, 26, 6],
+      backgroundColor: ['rgba(59,130,246,.8)','rgba(16,185,129,.8)','rgba(245,158,11,.8)'],
+      borderRadius: 8,
+      borderSkipped: false,
+      barThickness: 50
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(30,41,59,.3)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ======== 7. ERROR CHARTS ========
+new Chart(document.getElementById('chartErrors'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Límite Google API 429 (109)','Config. SMTP incorrecta (34)','Config. SMTP incorrecta (13)'],
+    datasets: [{
+      data: [109, 34, 13],
+      backgroundColor: ['rgba(245,158,11,.8)','rgba(239,68,68,.8)','rgba(139,92,246,.8)'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '55%',
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
+  }
+});
+
+new Chart(document.getElementById('chartErrorsByOrigin'), {
+  type: 'bar',
+  data: {
+    labels: ['itiss@infinity...','yanirys@...','erojas@eetax...','jchprof...@yahoo','profincome@aol','myportal@itaxhub'],
+    datasets: [{
+      label: 'Incidencias',
+      data: [109, 29, 7, 5, 5, 1],
+      backgroundColor: [
+        'rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(139,92,246,.7)',
+        'rgba(59,130,246,.7)','rgba(16,185,129,.7)','rgba(6,182,212,.7)'
+      ],
+      borderRadius: 6,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(30,41,59,.3)' } },
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+new Chart(document.getElementById('chartErrorsBySubject'), {
+  type: 'bar',
+  data: {
+    labels: ['Firma Docs','Bienvenida Portal','Recordatorio Firma','Portal Deshabilitado','Reset Password','Acceso Habilitado','Refund Overdue','Password Reset OK','Payment Received','Verificación Firma'],
+    datasets: [{
+      label: 'Incidencias',
+      data: [29, 21, 12, 10, 10, 9, 7, 5, 25, 8],
+      backgroundColor: 'rgba(239,68,68,.6)',
+      borderRadius: 4,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, grid: { color: 'rgba(30,41,59,.3)' } },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+// ======== POPULATE USERS TABLE ========
+const users = [
+  {n:'JOHARY ADAMES',r:true,s:28,d:9,u:'Mar 11, 15:41'},
+  {n:'Alma Sanchez',r:true,s:25,d:10,u:'Mar 11, 00:59'},
+  {n:'Ana Maria Leon Gomez',r:true,s:20,d:9,u:'Mar 11, 15:32'},
+  {n:'Salvador Solorzano',r:false,s:17,d:10,u:'Mar 11, 00:20'},
+  {n:'Cesar Manuel Mejia B.',r:true,s:17,d:6,u:'Mar 9, 16:26'},
+  {n:'Veronica Ocampo',r:false,s:16,d:9,u:'Mar 11, 00:03'},
+  {n:'OLGA PENA',r:true,s:14,d:7,u:'Mar 10, 20:34'},
+  {n:'Magda Rodriguez',r:false,s:13,d:7,u:'Mar 10, 17:33'},
+  {n:'Liz Velez',r:false,s:13,d:9,u:'Mar 11, 15:25'},
+  {n:'Gloria Gomez',r:true,s:11,d:5,u:'Mar 11, 15:03'},
+  {n:'Zahiris E. Pacheco',r:true,s:9,d:6,u:'Mar 10, 16:38'},
+  {n:'Salvador Castillo',r:true,s:9,d:7,u:'Mar 10, 15:41'},
+  {n:'LUZ ALMONTE',r:true,s:9,d:7,u:'Mar 11, 03:12'},
+  {n:'Sales Account 1',r:true,s:8,d:6,u:'Mar 9, 17:16'},
+  {n:'Denis Leon',r:true,s:7,d:5,u:'Mar 9, 14:18'},
+  {n:'Delmy Escoto',r:true,s:7,d:6,u:'Mar 11, 15:04'},
+  {n:'Demo Tax',r:true,s:6,d:4,u:'Mar 9, 16:20'},
+  {n:'Nathanael Ramirez',r:true,s:6,d:5,u:'Mar 10, 13:57'},
+  {n:'yanirys heredia',r:false,s:6,d:4,u:'Mar 8, 02:06'},
+  {n:'Yadirys Heredia',r:false,s:5,d:2,u:'Mar 3, 21:05'},
+  {n:'Luisa Rosario',r:false,s:5,d:3,u:'Mar 11, 14:27'},
+  {n:'Jessica Carbajal',r:true,s:5,d:3,u:'Mar 10, 19:56'},
+  {n:'Kimberly Ovalles',r:true,s:4,d:3,u:'Mar 9, 04:40'},
+  {n:'Jaime Robledo',r:true,s:4,d:3,u:'Mar 6, 23:58'},
+  {n:'Zoila Munoz',r:true,s:4,d:4,u:'Mar 9, 14:18'},
+  {n:'Javier Hernandez M.',r:false,s:3,d:3,u:'Mar 10, 19:17'},
+  {n:'abel moreno',r:true,s:3,d:2,u:'Mar 5, 23:21'},
+  {n:'Moises Moke',r:true,s:3,d:3,u:'Mar 9, 18:16'},
+  {n:'JULY LOPEZ',r:true,s:3,d:2,u:'Mar 6, 17:39'},
+  {n:'YADIRA BROWN',r:true,s:3,d:1,u:'Mar 5, 20:07'},
+  {n:'Martinita Vrolijk',r:true,s:2,d:1,u:'Mar 4, 16:43'},
+  {n:'George Caballero',r:true,s:2,d:1,u:'Mar 6, 16:41'},
+  {n:'ROSA SILVA',r:false,s:2,d:2,u:'Mar 10, 16:22'},
+  {n:'Irma Perez',r:false,s:2,d:2,u:'Mar 5, 21:52'},
+  {n:'Maria Ortiz',r:false,s:2,d:2,u:'Mar 11, 13:40'},
+  {n:'Michael Olson',r:false,s:2,d:2,u:'Mar 9, 16:02'},
+  {n:'Jonathan Perez Garcia',r:true,s:2,d:2,u:'Mar 10, 23:54'},
+  {n:'Hillary Marichal',r:false,s:2,d:2,u:'Mar 4, 14:19'},
+  {n:'ZULY CASTANEDA',r:false,s:1,d:1,u:'Mar 2, 22:54'},
+  {n:'Noelhy Robledo',r:false,s:1,d:1,u:'Mar 2, 20:25'},
+  {n:'SOLEDAD REGALADO',r:true,s:1,d:1,u:'Mar 10, 22:20'},
+  {n:'MARIA I COBENA',r:true,s:1,d:1,u:'Mar 4, 02:39'},
+  {n:'Shiara Polanco',r:false,s:1,d:1,u:'Mar 2, 15:19'},
+  {n:'Jeymy Rodriguez',r:false,s:1,d:1,u:'Mar 2, 15:19'},
+];
+const utb = document.querySelector('#usersTable tbody');
+users.forEach((u,i) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td class="rank">${i+1}</td><td>${u.n}</td><td>${u.r ? '<span class="badge badge-owner">Propietario</span>' : '<span class="badge badge-employee">Empleado</span>'}</td><td>${u.s}</td><td>${u.d}</td><td>${u.u}</td>`;
+  utb.appendChild(tr);
+});
+
+// ======== POPULATE OWNERS TABLE ========
+const owners = [
+  {o:'N & J Services Corp',p:'Martinita Vrolijk',f:'25/02/2026'},
+  {o:'Fast Way Tax Services LLC',p:'Jesus Collado',f:'11/02/2026'},
+  {o:'Fastway Multiservices Corp',p:'Abel Moreno',f:'04/02/2026'},
+  {o:'Tampa Multiservices Inc',p:'Gloria Gomez',f:'28/01/2026'},
+  {o:'Tampa Multiservice Inc',p:'Ana Maria Leon Gomez',f:'27/01/2026'},
+  {o:'Diamond Multiservices',p:'Johary Adames',f:'26/01/2026'},
+  {o:'Hightlight Tax Services LLC',p:'Joel Paula',f:'22/01/2026'},
+  {o:'DLeon S Services Corp',p:'Denis Leon',f:'21/01/2026'},
+  {o:'Jasastsa Business Services LLC',p:'Jacqueline Rodriguez',f:'19/01/2026'},
+  {o:'JC&H Professional Services LLC',p:'Jessica Carbajal',f:'16/01/2026'},
+  {o:'K&J Santana Multiservice LLC',p:'Kimberly Ovalles',f:'16/01/2026'},
+  {o:'Galvantaxes Corp',p:'Rosa Garcia',f:'16/01/2026'},
+  {o:'New Generation 2.0 Tax Multiservices',p:'Katiusca Acosta',f:'15/01/2026'},
+  {o:'Luz Almonte Tax Service',p:'Luz Almonte',f:'15/01/2026'},
+  {o:"Angie's Auto Tags Inc",p:'Angie Millan',f:'01/03/2026'},
+  {o:'Amsterdam Accounting Service',p:'Iris Perez',f:'31/12/2025'},
+  {o:'Protax LLC',p:'Adela Hernandez',f:'31/12/2025'},
+  {o:'Sol Tax Preparation LLC',p:'Soledad Regalado',f:'31/12/2025'},
+  {o:'Latinos Solutions',p:'Jose F. Espinal-Marrero',f:'29/12/2025'},
+  {o:'Erie Professional Services Inc',p:'Angel Agustin Morales',f:'23/12/2025'},
+  {o:'Tramex Business Group',p:'George Caballero',f:'23/12/2025'},
+  {o:'JR Enterprises Income Tax Firm LLC',p:'Jaime Robledo',f:'19/12/2025'},
+  {o:'VIP Tax and Accounting Corp',p:'July Lopez',f:'17/12/2025'},
+  {o:'JP Income Tax Solutions',p:'Jonathan Perez Garcia',f:'13/12/2025'},
+  {o:'ITIS Multiservices Inc',p:'Alma Sanchez',f:'13/12/2025'},
+  {o:'Llenalo Aqui Tax Services',p:'Salvador Castillo',f:'12/12/2025'},
+  {o:'M&C Tax Service LLC',p:'Maria I Cobena',f:'11/12/2025'},
+  {o:'Professional Income Tax',p:'Ezequiel Hernandez',f:'11/12/2025'},
+  {o:'Multy Latin Tax Services Inc',p:'Yadira Brown',f:'10/12/2025'},
+  {o:'Mikasa Financial Services',p:'Miguel Afanador',f:'10/12/2025'},
+  {o:'Real Tax Multiservices',p:'Beatriz Fernandez',f:'10/12/2025'},
+  {o:'Solis Multi-Services',p:'Nora Sanchez',f:'14/11/2025'},
+  {o:'Luis Castillo Accounting & Tax',p:'Luis Castillo',f:'13/11/2025'},
+  {o:'E&E Tax and Multiservices',p:'Estrella Rojas',f:'07/11/2025'},
+  {o:'Gerber Sierra Accounting',p:'Ana Sierra',f:'06/11/2025'},
+  {o:'iTax Hub LLC',p:'Delmy Escoto',f:'06/11/2025'},
+  {o:'JS Tax Multiservicios',p:'Johanna Santana Rosario',f:'05/11/2025'},
+  {o:'PTY Taxes & More LLC',p:'Moises Moke',f:'04/11/2025'},
+  {o:'BDA Accounting Services',p:'Nathanael Ramirez',f:'04/11/2025'},
+  {o:'EZ Accounting Services & More LLC',p:'Zahiris E. Pacheco',f:'01/11/2025'},
+  {o:'Caribe Tax Service',p:'Vicente Ceron',f:'31/10/2025'},
+  {o:'Negocios Latinos Group',p:'Jessica Castaneda Lozada',f:'30/10/2025'},
+  {o:"Irma's Taxes LLC",p:'Irma Silva',f:'29/10/2025'},
+  {o:'Time Business Services LLC',p:'Olga Pena',f:'21/10/2025'},
+  {o:'MnL Accounting',p:'Maria Maciel',f:'20/09/2025'},
+  {o:'Paisano Income Tax Services',p:'Irma Ornelas',f:'20/09/2025'},
+  {o:'Espinoza Insurance Service',p:'Freddy Espinoza',f:'20/09/2025'},
+  {o:'LM North Services LLC',p:'Laura Matos',f:'19/09/2025'},
+  {o:'Zoila Tax Solution',p:'Zoila Munoz',f:'18/09/2025'},
+  {o:'Mi Negocio Business Services',p:'Jacqueline Negron',f:'18/09/2025'},
+  {o:'Advanced Management & Multiservices',p:'Awilda Williams',f:'18/09/2025'},
+];
+const otb = document.querySelector('#ownersTable tbody');
+owners.forEach((o,i) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td class="rank">${i+1}</td><td>${o.o}</td><td>${o.p}</td><td>${o.f}</td>`;
+  otb.appendChild(tr);
+});
+</script>
+</body>
+</html>
