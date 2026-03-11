@@ -409,7 +409,7 @@
     <h3>📊 Explicación Global del Reporte</h3>
     <p>Este panel presenta el análisis integral de la base de datos de <strong>TaxPro Suite</strong> correspondiente a los primeros 11 días de marzo 2026. Los datos reflejan la actividad real de la plataforma, incluyendo sesiones de usuario, patrones de conexión, dispositivos utilizados, distribución geográfica, y un análisis detallado de las incidencias de correo electrónico registradas en las cuentas de los clientes.</p>
     <p>De las <strong>51 oficinas registradas</strong> en la plataforma, <strong>46 usuarios únicos</strong> generaron actividad en este período, lo que indica una tasa de adopción del <strong>90.2%</strong> en el mes. Se registraron un total de <strong>309 sesiones</strong>, con un promedio de <strong>6.72 sesiones por usuario</strong>, lo cual refleja un uso recurrente y constante del sistema durante la temporada fiscal.</p>
-    <p>Los días de mayor actividad son <strong>lunes a jueves</strong> (entre 34-43 sesiones diarias), mientras que los fines de semana registran una caída significativa (4-19 sesiones). Se identificaron <strong>156 incidencias en el envío de correos</strong>, de las cuales la <strong>gran mayoría (30% — "Failure sending mail" y "Syntax error") se deben a configuraciones incorrectas del SMTP en las cuentas de los clientes</strong>, no a fallos del sistema TaxPro Suite. El 70% restante corresponde a <strong>bloqueos por límite de tasa impuestos por el proveedor Google (error 429)</strong>, una restricción externa de Gmail que no está bajo control de la plataforma. Estas situaciones han sido abordadas en múltiples sesiones de soporte y capacitación, donde el equipo de desarrollo ha demostrado el procedimiento correcto de <strong>configuración SMTP</strong> que debe ser utilizado por los equipos de soporte al momento de configurar las cuentas de correo de cada cliente.</p>
+    <p>Los días de mayor actividad son <strong>lunes a jueves</strong> (entre 34-43 sesiones diarias), mientras que los fines de semana registran una caída significativa (4-19 sesiones). Se identificaron <strong>156 incidencias en el envío de correos</strong>. Según la clasificación técnica de logs del período analizado, el bloque mayoritario — <strong>109 casos (70%) — corresponde a bloqueos por límite de cuota impuestos directamente por el proveedor externo Google (error 429)</strong>, una restricción de Gmail que no está bajo control de la plataforma. Los <strong>47 casos restantes (30%) se deben a configuraciones SMTP incorrectas en las cuentas de correo de los clientes</strong>. Estas situaciones han sido abordadas en múltiples sesiones de soporte y capacitación, donde el equipo de desarrollo ha demostrado el procedimiento correcto de <strong>configuración SMTP</strong> que debe ser utilizado por los equipos de soporte al momento de configurar las cuentas de correo de cada cliente.</p>
   </div>
 
   <!-- SMS MODULE NOTE -->
@@ -438,7 +438,7 @@
 <!-- SECTION 2: WEEKLY -->
 <div class="section">
   <div class="section-title"><span class="dot" style="background:var(--accent-green)"></span> Sesiones por Semana</div>
-  <div class="section-desc">Vista agregada semanal que compara el volumen de sesiones entre la Semana 10 (1-7 marzo, semana completa) y la Semana 11 (8-11 marzo, parcial). La Semana 10 registró 201 sesiones con 40 usuarios, mientras que la Semana 11 lleva 107 sesiones con 31 usuarios en solo 4 días, lo que proyecta un ritmo similar o superior.</div>
+  <div class="section-desc">Vista agregada semanal que compara el volumen de sesiones entre la Semana 10 (1-7 marzo, semana completa) y la Semana 11 (8-11 marzo, parcial). La Semana 10 registró <strong>202 sesiones</strong> con 40 usuarios, mientras que la Semana 11 lleva <strong>107 sesiones</strong> con 31 usuarios en solo 4 días — sumando <strong>309 sesiones en total</strong>, lo que proyecta un ritmo similar o superior para la segunda semana.</div>
   <div class="grid-2">
     <div class="card">
       <div class="card-title">Comparativa Semanal</div>
@@ -502,25 +502,28 @@
 <!-- SECTION 5: COUNTRIES -->
 <div class="section">
   <div class="section-title"><span class="dot" style="background:#06b6d4"></span> Sesiones por País</div>
-  <div class="section-desc">Muestra la distribución geográfica de los accesos al sistema. El <strong>89.64%</strong> del tráfico proviene de Estados Unidos (43 usuarios), seguido por República Dominicana con <strong>8.41%</strong> (3 usuarios) y España con <strong>1.94%</strong> (1 usuario). Esto confirma que la base de usuarios es predominantemente estadounidense, con presencia en el Caribe y Europa, lo que es relevante para decisiones de infraestructura (CDN), horarios de mantenimiento y estrategias de expansión.</div>
+  <div class="section-desc">Muestra la distribución geográfica de los accesos al sistema. El <strong>89.64%</strong> del tráfico proviene de Estados Unidos (43 usuarios), que corresponde íntegramente a la base de clientes activos. Las conexiones desde República Dominicana (<strong>8.41%</strong>, 26 sesiones) y España (<strong>1.94%</strong>, 6 sesiones) corresponden al <strong>Equipo de Desarrollo</strong> de TaxPro Suite y no representan sesiones de clientes. Esto confirma que el 100% de los usuarios clientes del sistema opera desde los Estados Unidos.</div>
   <div class="grid-3">
     <div class="card" style="text-align:center">
       <div style="font-size:48px;margin-bottom:8px">🇺🇸</div>
       <div style="font-family:'JetBrains Mono';font-size:28px;font-weight:700">89.64%</div>
       <div style="color:var(--text-secondary);font-size:13px">Estados Unidos</div>
       <div style="color:var(--text-muted);font-size:12px;margin-top:4px">277 sesiones · 43 usuarios</div>
+      <div style="margin-top:10px;display:inline-block;padding:4px 12px;border-radius:20px;background:rgba(59,130,246,.12);color:#60a5fa;font-size:11px;font-weight:600">Base de Clientes</div>
     </div>
     <div class="card" style="text-align:center">
       <div style="font-size:48px;margin-bottom:8px">🇩🇴</div>
       <div style="font-family:'JetBrains Mono';font-size:28px;font-weight:700">8.41%</div>
       <div style="color:var(--text-secondary);font-size:13px">República Dominicana</div>
       <div style="color:var(--text-muted);font-size:12px;margin-top:4px">26 sesiones · 3 usuarios</div>
+      <div style="margin-top:10px;display:inline-block;padding:4px 12px;border-radius:20px;background:rgba(139,92,246,.12);color:#a78bfa;font-size:11px;font-weight:600">Equipo de Desarrollo</div>
     </div>
     <div class="card" style="text-align:center">
       <div style="font-size:48px;margin-bottom:8px">🇪🇸</div>
       <div style="font-family:'JetBrains Mono';font-size:28px;font-weight:700">1.94%</div>
       <div style="color:var(--text-secondary);font-size:13px">España</div>
       <div style="color:var(--text-muted);font-size:12px;margin-top:4px">6 sesiones · 1 usuario</div>
+      <div style="margin-top:10px;display:inline-block;padding:4px 12px;border-radius:20px;background:rgba(139,92,246,.12);color:#a78bfa;font-size:11px;font-weight:600">Equipo de Desarrollo</div>
     </div>
   </div>
   <div class="card" style="margin-top:0">
@@ -590,7 +593,7 @@
   </div>
   <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:16px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
     <span style="font-size:22px">✅</span>
-    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin:0"><strong style="color:#34d399">Conclusión:</strong> El 100% de las 156 incidencias registradas se originan fuera del sistema TaxPro Suite — ya sea por configuración incorrecta de SMTP en cuentas de clientes (30.1%) o por restricciones de cuota del proveedor Google (69.9%). El sistema registra y reporta correctamente cada incidencia. La solución pasa por que el equipo de soporte aplique el procedimiento de <strong>SMTP Configuration</strong> enseñado en las capacitaciones del equipo de desarrollo.</p>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin:0"><strong style="color:#34d399">Clasificación según logs del período analizado:</strong> Según la revisión técnica de logs del período examinado, las 156 incidencias registradas corresponden a <strong>configuraciones SMTP incorrectas en cuentas de clientes (30.1%)</strong> y a <strong>restricciones de cuota impuestas por el proveedor externo Google (69.9%)</strong>. El sistema registra y reporta correctamente cada incidencia. La resolución de las cuentas pendientes depende de la correcta reconfiguración por el equipo de soporte con los parámetros del proveedor de correo del cliente, siguiendo el procedimiento de <strong>SMTP Configuration</strong> demostrado en las capacitaciones del equipo de desarrollo.</p>
   </div>
 
   <div class="grid-2">
